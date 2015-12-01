@@ -27,6 +27,12 @@ class ConfigType extends AbstractType {
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
+
+        $builder->add('active', 'yesno_button_group', array(
+            'label' => 'mautic.analytics.tagging.active',
+            'data' => (bool) $options['data']['active'],
+        ));
+
         $builder->add('utm_source', 'text', array(
             'label' => 'mautic.analytics.tagging.utm_source',
             'label_attr' => array('class' => 'control-label'),

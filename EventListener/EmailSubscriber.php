@@ -29,9 +29,7 @@ class EmailSubscriber extends CommonSubscriber {
      * @param EmailBuilderEvent $event
      */
     public function onEmailBuild(EmailBuilderEvent $event) {
-        // Add email tokens
-        //   $content = $this->templating->render('MauticAnalyticsTaggingBundle:SubscribedEvents\EmailToken:token.html.php');
-        // $event->addTokenSection('extendedplugin.token', 'plugin.extendedplugin.header', $content);
+        
     }
 
     /**
@@ -40,6 +38,11 @@ class EmailSubscriber extends CommonSubscriber {
      * @param EmailSendEvent $event
      */
     public function onEmailGenerate(EmailSendEvent $event) {
+
+        $active = $this->factory->getParameter('active');
+        if (!$active)
+            return;
+
         // Get content
         $content = $event->getContent();
         $email = $event->getEmail();
@@ -81,7 +84,7 @@ class EmailSubscriber extends CommonSubscriber {
                     $url_array = explode("#", $url);
                     if (count($url_array) == 2) {
                         $url = $url_array[0];
-                        $add_to_url = '#'.$url_array[1];
+                        $add_to_url = '#' . $url_array[1];
                     }
                 }
 

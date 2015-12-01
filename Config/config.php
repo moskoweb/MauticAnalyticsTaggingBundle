@@ -22,6 +22,7 @@ return array(
         ),
     ),
     'parameters' => array(
+        'active' => true,
         'utm_source' => 'mautic',
         'utm_medium' => 'email',
         'utm_campaign' => 'subject',

@@ -1,8 +1,7 @@
 <?php
 /**
- * @Author  Chad Windnagle
- * @Project TestPlugin
- * Date: 4/13/15
+ * @Author  kuzmany.biz
+ * @Project MauticAnalyticsTaggingBundle
  */
 
 namespace MauticPlugin\MauticAnalyticsTaggingBundle;
