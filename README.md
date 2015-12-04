@@ -9,10 +9,9 @@
 <li>Go to your Settings > Plugins section.</li>
 <li>Install/Upgrade Plugins should add new plugin.</li>
 <li>Go to Settings > Configuration. Manage new Analytics taggins settings.</li>
-<li>Send example email. UTM tags willadded to every link.</li>
+<li>Send example email. UTM tags will be added to every link.</li>
 </ol>
-## How to works?
+## What do you need know? 
 
 Plugin skip url If url has already utm parameters.<br />
 Plugin support url with hashs (#).
-
