@@ -42,7 +42,6 @@ class EmailSubscriber extends CommonSubscriber {
         $active = $this->factory->getParameter('active');
         if (!$active)
             return;
-
         // Get content
         $content = $event->getContent();
         $email = $event->getEmail();
@@ -62,16 +61,42 @@ class EmailSubscriber extends CommonSubscriber {
             $utm_campaign = $email->getSubject();
 
         if ($remove_accents) {
-            $charset = 'utf-8';
-            $utm_campaign_type = htmlentities($utm_campaign, ENT_NOQUOTES, $charset);
-
-            $utm_campaign = preg_replace('#&([A-za-z])(?:acute|cedil|caron|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $utm_campaign);
-            $utm_campaign = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $utm_campaign); // pour les ligatures e.g. '&oelig;'
-            $utm_campaign = preg_replace('#&[^;]+;#', '', $utm_campaign); // supprime les autres caractères
+            setlocale(LC_CTYPE, 'en_US.UTF8');
+            $string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $utm_campaign);
+            $string = str_replace(' ', '-', $string);
+            $string = preg_replace('/\\s+/', '-', $string);
+            $utm_campaign = strtolower($string);
         }
 
         $content = $this->add_analytics_tracking_to_urls($content, $utm_source, $utm_campaign, $utm_medium);
+        $content = $this->add_analytics_tracking_to_urls2($content, $utm_source, $utm_campaign, $utm_medium);
         $event->setContent($content);
+    }
+
+    protected function add_analytics_tracking_to_urls2($body, $source, $campaign, $medium = 'email') {
+        return preg_replace_callback('#(<v:roundrect.*?href=")([^"]*)("[^>]*?>)#i', function($match) use ($source, $campaign, $medium) {
+            $url = $match[2];
+            if (strpos($url, 'utm_source') === false && strpos($url, 'http') !== false) {
+
+                $add_to_url = '';
+                if (strpos($url, '#') !== false) {
+                    $url_array = explode("#", $url);
+                    if (count($url_array) == 2) {
+                        $url = $url_array[0];
+                        $add_to_url = '#' . $url_array[1];
+                    }
+                }
+
+                if (strpos($url, '?') === false) {
+                    $url .= '?';
+                } else {
+                    $url .= '&';
+                }
+                $url .= 'utm_source=' . $source . '&utm_medium=' . $medium . '&utm_campaign=' . urlencode($campaign);
+                $url .=$add_to_url;
+            }
+            return $match[1] . $url . $match[3];
+        }, $body);
     }
 
     protected function add_analytics_tracking_to_urls($body, $source, $campaign, $medium = 'email') {
